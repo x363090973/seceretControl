@@ -1,0 +1,18 @@
+/*
+ * @Date: 2020-06-22 11:45:37
+ * @LastEditors: xiangjiacheng
+ * @LastEditTime: 2020-06-22 11:45:38
+ * @FilePath: \koa-quickstart\jsconfig.js
+ */ 
+
+{
+  "compilerOptions": {
+      "target": "es6",
+      "module": "esnext", //
+      "checkJs": true,
+      "baseUrl": "./",
+  },
+  "exclude": [
+      "node_modules",
+  ]
+}
