@@ -2,7 +2,7 @@
    @Description: 单个表格的基础数据类
  * @Date: 2020-03-06 17:06:33
  * @LastEditors: xiangjiacheng
- * @LastEditTime: 2020-06-30 18:07:37
+ * @LastEditTime: 2020-07-01 14:51:17
  * @FilePath: \koa-quickstart\model\basicClass\hwUser.js
  */
 'use strict';
@@ -41,28 +41,29 @@ module.exports = class HwUser {
         this.isTrialUser = moment(this.deedline).isSameOrBefore(moment())
         /**剩余时间 秒 */
         this.excessTime = 0
+
         if (this.isTrialUser) {
             if (!this.lastLoginTime || moment(this.lastLoginTime).isSameOrBefore(moment().startOf('weeks'))) {
 
-                this.deedline = moment().add(1, 'd')
+                this.deedline = moment().add(1, 'd').format('YYYY-MM-DD hh:mm:ss')
             }
         }
         this.excessTime = moment(this.deedline).diff(moment(), 's')
-
+        this.canUse = this.excessTime > 0
     }
 
 
-    /**更新状态 */
+    /**更新状态
+     * @returns {HwUser}
+     */
     update() {
         /**是否试用用户 */
         this.isTrialUser = moment(this.deedline).isSameOrBefore(moment())
         /**剩余时间 秒 */
         this.excessTime = 0
-        if (this.isTrialUser) {
-            this.excessTime = this.freeTime
-        } else {
-            this.excessTime = moment(this.deedline).diff(moment(), 's')
-        }
+        this.excessTime = moment(this.deedline).diff(moment(), 's')
+        this.canUse = this.excessTime > 0
+        return this
     }
 
 

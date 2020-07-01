@@ -2,7 +2,7 @@
  * 分组的分组管理列表
  * @Date: 2020-03-17 15:59:52
  * @LastEditors: xiangjiacheng
- * @LastEditTime: 2020-06-30 18:08:23
+ * @LastEditTime: 2020-07-01 14:33:54
  * @FilePath: \koa-quickstart\model\groupClass\cardList.js
  */
 
@@ -13,6 +13,7 @@ const Card = require('../basicClass/card')
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const moment = require('moment')
 
 /**
  * 集合模块:卡密管理
@@ -35,7 +36,11 @@ module.exports = class CardList {
          * @description 使用中的卡密
          */
         this.useCardList = [];
-
+        /**
+         * @description  秘钥的MAP
+         *  @type {Object.<string, Card>}
+         */
+        this.secretMap = {}
         this.secretkey = 'zhangchi'
     }
 
@@ -46,6 +51,8 @@ module.exports = class CardList {
     get newCardList() {
         return this.cardList.filter(c => !c.isActivated)
     }
+
+
 
     /**
      * @description OSS存储数据 
@@ -91,7 +98,10 @@ module.exports = class CardList {
      * @description 将数据展开 
      */
     _makeMapData() {
-
+        this.cardList = _.map(this.cardList, c => new Card(c))
+        _.map(this.cardList, c => this.secretMap[c.secret] = c)
+        //过滤一个月之前产生但是没有激活的卡
+        this.cardList = this.cardList.filter(c => moment(c.creatTime).isAfter(moment().subtract(2, 'month')) || !c.isExpired)
     }
 
 
@@ -113,7 +123,7 @@ module.exports = class CardList {
 
     /**
      * @description 加密算法
-     * @param {*} data 
+     * @param {*} data 加密字符串 
      * @returns 返回一个卡密 
      */
     aseEncode(data) {
@@ -131,9 +141,9 @@ module.exports = class CardList {
 
 
     /**
-     * @description 加密算法
-     * @param {*} data 
-     * @returns 返回一个卡密 
+     * @description 解密算法
+     * @param {*} data 解密字符串
+     * @returns 解密字符串 
      */
     aseDecode(data) {
         /* 

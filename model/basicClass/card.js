@@ -2,7 +2,7 @@
    @Description: 单个表格的基础数据类
  * @Date: 2020-03-06 17:06:33
  * @LastEditors: xiangjiacheng
- * @LastEditTime: 2020-06-23 14:22:52
+ * @LastEditTime: 2020-07-01 14:26:35
  * @FilePath: \koa-quickstart\model\basicClass\card.js
  */
 'use strict';
@@ -28,10 +28,14 @@ module.exports = class Card {
         this.secret = _.get(card, 'secret', '')
         /**
          * @description 类型
-         * 天卡|周卡|月卡|季卡|年卡
+         * day|week|month|quarter|year
          */
         this.type = _.get(card, 'type', '')
 
+        /**
+         * 系统生成时间
+         */
+        this.creatTime = _.get(card, 'creatTime', moment().toLocaleString())
 
         /**
          * @description 是否被激活
@@ -52,8 +56,9 @@ module.exports = class Card {
          * @description 绑定的地址
          **/
         this.bindInfo = {
-            ip: '',
-            mac: ''
+            cpuNumber: '',
+            hardDiskNumber: '',
+            md5id: ''
         }
     }
 

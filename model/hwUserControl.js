@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-03-06 17:06:33
- * @LastEditTime: 2020-06-30 17:52:23
+ * @LastEditTime: 2020-07-01 09:47:43
  * @LastEditors: xiangjiacheng
  * @Description: In User Settings Edit
  * @FilePath: \koa-quickstart\model\hwUserControl.js
@@ -27,8 +27,19 @@ exports.loginByFree = async (data) => {
     hwUserList.idMap[md5id].lastLoginTime = moment()
     await hwUserList.save()
     return hwUserList.idMap[md5id]
+};
 
 
+
+/**
+ * @description 获取用户列表
+   @returns 
+ */
+exports.getUserList = async () => {
+
+    let hwUserList = await HwUserList.getInitData();
+    _.forEach(hwUserList.hwUserList, h => h.update())
+    return hwUserList.hwUserList
 };
 
 
