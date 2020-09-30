@@ -47,7 +47,7 @@ exports.getCardList = async () => {
 
     let cardList = await CardList.getInitData();
 
-    return cardList.cardList
+    return _.sortBy(cardList.cardList, "isActivated")
 };
 
 
@@ -84,23 +84,17 @@ exports.bind = async (data) => {
     }
     let card = cardList.secretMap[secret]
     if (!card.isActivated) {
-        //如果卡密没有被激活 则直接绑定
-
+        //如果卡密没有被激活 则直接添加绑定
         card.isActivated = true;
         card.deadline = moment().add(card.validity, 'day').format('YYYY-MM-DD hh:mm:ss')
-        hwUserList.idMap[md5id].deadline = card.deadline
-        hwUserList.idMap[md5id] = hwUserList.idMap[md5id].update()
+        card.excessTime = moment(card.deadline).diff(moment(), 's')
 
     } else {
-        //如果卡密被激活
-
-        hwUserList.idMap[md5id].deadline = card.deadline
-        hwUserList.idMap[md5id] = hwUserList.idMap[md5id].update()
-
+        card.excessTime = moment(card.deadline).diff(moment(), 's')
     }
     cardList.save();
     hwUserList.save()
-    return hwUserList.idMap[md5id]
+    return card
 };
 
 
@@ -132,7 +126,7 @@ exports.unBind = async (data) => {
     if (cardList.secretMap[secret].bindInfo.cpuNumber !== cpuNumber || cardList.secretMap[secret].bindInfo.hardDiskNumber != hardDiskNumber) {
         throw '请在绑定的机器上解绑'
     }
-    hwUserList.idMap[md5id].deadline = moment().format('YYYY-MM-DD hh:mm:ss')
+
     cardList.secretMap[secret].bindInfo = {
         cpuNumber: '',
         hardDiskNumber: '',

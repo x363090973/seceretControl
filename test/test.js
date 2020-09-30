@@ -7,4 +7,4 @@
 const moment = require('moment')
 
 
-console.log(moment(moment().add(1, 'hour')).diff(moment(), 's'))
+console.log(moment("2020-10-30 10:27:56").diff(moment(), 's') / 3600 / 24)

@@ -48,6 +48,12 @@ module.exports = class Card {
         this.deadline = _.get(card, 'deadline')
 
         /**
+         * @description 剩余秒数
+         */
+        this.excessTime = _.get(card, 'excessTime', 0)
+
+
+        /**
          * @description 是否已经过期
          *  */
         this.isExpired = this.isActivated ? moment().isAfter(this.deadline) : false
