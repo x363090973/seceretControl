@@ -20,12 +20,17 @@ const moment = require('moment')
  * @param  {string}   data.type       分组名称
  */
 exports.createCards = async (data) => {
-    let { number, type } = data
+    let {
+        number,
+        type
+    } = data
     let cardList = await CardList.getInitData();
     let str = `${type}_${new Date().getTime()}_${Math.floor(Math.random()*100)}`;
     let cards = [];
     for (let index = 0; index < number; index++) {
-        let card = new Card({ type })
+        let card = new Card({
+            type
+        })
         str += index
         card.secret = cardList.aseEncode(str)
         cardList.addCard(card);
@@ -54,44 +59,86 @@ exports.getCardList = async () => {
  * @param  {string}   data.secret       秘钥编号
  */
 exports.bind = async (data) => {
-    let { cpuNumber, hardDiskNumber, secret } = data
+    let {
+        cpuNumber,
+        hardDiskNumber,
+        secret
+    } = data
     let cardList = await CardList.getInitData();
     let hwUserList = await HwUserList.getInitData();
-    let md5id = HwUser.buildId({ cpuNumber, hardDiskNumber })
+    let md5id = HwUser.buildId({
+        cpuNumber,
+        hardDiskNumber
+    })
     if (!cardList.secretMap[secret]) {
         throw '秘钥错误不存在'
     }
-    if (cardList.secretMap[secret].isActivated) {
-        throw '该秘钥已经被激活'
+    if (!(cardList.secretMap[secret].bindInfo.md5id == '')) {
+        throw '该秘钥已经被绑定'
     }
+    //切换绑定信息
     cardList.secretMap[secret].bindInfo = {
         cpuNumber,
         hardDiskNumber,
         md5id
     }
+    let card = cardList.secretMap[secret]
+    if (!card.isActivated) {
+        //如果卡密没有被激活 则直接绑定
 
-    cardList.secretMap[secret].isActivated = true;
-    console.log('cardList.secretMap[secret] ===================>', cardList.secretMap[secret])
-    let str = cardList.aseDecode(secret)
-    let type = str.split('_')[0]
+        card.isActivated = true;
+        card.deadline = moment().add(card.validity, 'day').format('YYYY-MM-DD hh:mm:ss')
+        hwUserList.idMap[md5id].deadline = card.deadline
+        hwUserList.idMap[md5id] = hwUserList.idMap[md5id].update()
 
-    hwUserList.idMap[md5id].deedline = moment(hwUserList.idMap[md5id].deedline).isAfter(moment()) ? // @ts-ignore
-        moment(hwUserList.idMap[md5id].deedline).add(1, type + 's').format('YYYY-MM-DD hh:mm:ss') : // @ts-ignore
-        moment().add(1, type + 's').format('YYYY-MM-DD hh:mm:ss')
-    hwUserList.idMap[md5id] = hwUserList.idMap[md5id].update()
+    } else {
+        //如果卡密被激活
 
+        hwUserList.idMap[md5id].deadline = card.deadline
+        hwUserList.idMap[md5id] = hwUserList.idMap[md5id].update()
+
+    }
     cardList.save();
     hwUserList.save()
     return hwUserList.idMap[md5id]
 };
 
 
+
+
 /**
- * @description 删除分组
+ * @description 解绑秘钥
  * @param  {Object}   data
- * @param  {string}   data.groupId       分组ID
-   @returns 
+ * @param  {string}   data.cpuNumber       cpu编号
+ * @param  {string}   data.hardDiskNumber       硬盘编号
+ * @param  {string}   data.secret       秘钥编号
  */
-exports.deleteById = async (data) => {
+exports.unBind = async (data) => {
+    let {
+        cpuNumber,
+        hardDiskNumber,
+        secret
+    } = data
+    let cardList = await CardList.getInitData();
+    let hwUserList = await HwUserList.getInitData();
+    let md5id = HwUser.buildId({
+        cpuNumber,
+        hardDiskNumber
+    })
+    if (!cardList.secretMap[secret]) {
+        throw '秘钥错误不存在'
+    }
+
+    if (cardList.secretMap[secret].bindInfo.cpuNumber !== cpuNumber || cardList.secretMap[secret].bindInfo.hardDiskNumber != hardDiskNumber) {
+        throw '请在绑定的机器上解绑'
+    }
+    hwUserList.idMap[md5id].deadline = moment().format('YYYY-MM-DD hh:mm:ss')
+    cardList.secretMap[secret].bindInfo = {
+        cpuNumber: '',
+        hardDiskNumber: '',
+        md5id: ''
+    }
+    cardList.save();
+    hwUserList.save()
 
 };

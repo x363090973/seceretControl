@@ -55,11 +55,11 @@ module.exports = class Card {
         /**
          * @description 绑定的地址
          **/
-        this.bindInfo = {
+        this.bindInfo = _.get(card, 'bindInfo', {
             cpuNumber: '',
             hardDiskNumber: '',
             md5id: ''
-        }
+        })
     }
 
 
@@ -85,15 +85,15 @@ module.exports = class Card {
     get validity() {
 
         switch (this.type) {
-            case '天卡':
+            case 'day':
                 return 1
-            case '周卡':
+            case 'week':
                 return 7
-            case '月卡':
+            case 'month':
                 return 30
-            case '季卡':
+            case 'quarter':
                 return 90
-            case '年卡':
+            case 'year':
                 return 365
             default:
                 break;

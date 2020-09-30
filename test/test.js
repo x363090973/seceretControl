@@ -7,4 +7,4 @@
 const moment = require('moment')
 
 
-console.log(moment().startOf('week').diff(moment(), 'd'))
+console.log(moment(moment().add(1, 'hour')).diff(moment(), 's'))

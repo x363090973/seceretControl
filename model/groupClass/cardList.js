@@ -101,7 +101,7 @@ module.exports = class CardList {
         this.cardList = _.map(this.cardList, c => new Card(c))
         _.map(this.cardList, c => this.secretMap[c.secret] = c)
         //过滤一个月之前产生但是没有激活的卡
-        this.cardList = this.cardList.filter(c => moment(c.creatTime).isAfter(moment().subtract(2, 'month')) || !c.isExpired)
+        this.cardList = this.cardList.filter(c => moment(c.creatTime).isAfter(moment().subtract('month', 2)) || !c.isExpired)
     }
 
 

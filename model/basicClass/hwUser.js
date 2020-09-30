@@ -36,19 +36,19 @@ module.exports = class HwUser {
         this.lastLoginTime = _.get(user, 'lastLoginTime', '')
 
         /**到期时间 */
-        this.deedline = _.get(user, 'deedline', moment().format('YYYY-MM-DD hh:mm:ss'))
+        this.deadline = _.get(user, 'deadline', moment().format('YYYY-MM-DD hh:mm:ss'))
         /**是否试用用户 */
-        this.isTrialUser = moment(this.deedline).isSameOrBefore(moment())
+        this.isTrialUser = _.get(user, 'isTrialUser', true)
+
         /**剩余时间 秒 */
         this.excessTime = 0
 
         if (this.isTrialUser) {
-            if (!this.lastLoginTime || moment(this.lastLoginTime).isSameOrBefore(moment().startOf('weeks'))) {
-
-                this.deedline = moment().add(1, 'd').format('YYYY-MM-DD hh:mm:ss')
-            }
+            this.deadline = moment().add(1, 'd').format('YYYY-MM-DD hh:mm:ss')
+            this.isTrialUser = false
         }
-        this.excessTime = moment(this.deedline).diff(moment(), 's')
+        this.excessTime = moment(this.deadline).diff(moment(), 's')
+
         this.canUse = this.excessTime > 0
     }
 
@@ -57,11 +57,9 @@ module.exports = class HwUser {
      * @returns {HwUser}
      */
     update() {
-        /**是否试用用户 */
-        this.isTrialUser = moment(this.deedline).isSameOrBefore(moment())
         /**剩余时间 秒 */
         this.excessTime = 0
-        this.excessTime = moment(this.deedline).diff(moment(), 's')
+        this.excessTime = moment(this.deadline).diff(moment(), 's')
         this.canUse = this.excessTime > 0
         return this
     }
