@@ -43,7 +43,7 @@ module.exports = class HwUser {
         this.excessTime = 0
 
         if (this.isTrialUser) {
-            this.deadline = moment().add(1, 'd').format('YYYY-MM-DD hh:mm:ss')
+            this.deadline = moment().add(3, 'd').format('YYYY-MM-DD hh:mm:ss')
             this.isTrialUser = false
         }
         this.excessTime = moment(this.deadline).diff(moment(), 's')
