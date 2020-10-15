@@ -9,6 +9,47 @@ let router = new Router();
 const hwUserControl = require("../model/hwUserControl");
 const cardControl = require("../model/cardControl");
 const Joi = require("@hapi/joi");
+const {
+  required
+} = require("@hapi/joi");
+
+//获取软件版本
+router.post("/software/getVersion", async (ctx, next) => {
+  try {
+    const schema = Joi.object({
+      name: Joi.string().required(),
+    }).unknown();
+    let checkRet = schema.validate(ctx.request.body);
+    if (checkRet.error) {
+      throw checkRet.error.message;
+    }
+    let {
+      name
+    } = ctx.request.body;
+
+    let softwareVersionList = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '../data/softwareVersion.json'), 'utf8'))
+
+    let ret = softwareVersionList.find(e => e.name === name)
+    if (ret) {
+      ctx.body = {
+        status: "success",
+        data: ret
+      };
+    } else {
+      ctx.body = {
+        status: "fail",
+        msg: "不存在该软件",
+      };
+    }
+
+  } catch (error) {
+    ctx.body = {
+      status: "fail",
+      msg: error.message || error,
+    };
+  }
+});
+
 
 /**
  * @description 硬件用户登录
@@ -80,7 +121,6 @@ router.post("/hwUser/loginBySecert", async (ctx, next) => {
     };
   }
 });
-
 /**
  * @description 获取硬件用户列表
  */

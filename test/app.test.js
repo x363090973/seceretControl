@@ -7,7 +7,7 @@
 let expect = require("chai").expect;
 const _ = require("lodash");
 const superagent = require("superagent");
-let basrUrl = "http://localhost:3000";
+let basrUrl = "http://localhost:3030";
 
 (async () => {
   let secret = "1";
@@ -60,18 +60,17 @@ let basrUrl = "http://localhost:3000";
     .catch((err) => {
       console.log(err);
     });
-  // await superagent
-  //     .post(`${basrUrl}/card/bind`)
-  //     .send({
-  //         cpuNumber: "cpuNumber",
-  //         hardDiskNumber: "hardDiskNumber",
-  //         secret,
-  //     })
-  //     .set("Accept", "application/json")
-  //     .then((ret) => {
-  //         expect(ret.body.err).to.be.equals("该秘钥已经被激活");
-  //     })
-  //     .catch((err) => {
-  //         console.log(err);
-  //     });
+  await superagent
+    .post(`${basrUrl}/software/getVersion`)
+    .send({
+      name: "wgjx"
+    })
+    .set("Accept", "application/json")
+    .then((ret) => {
+      console.log(ret)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
 })();
