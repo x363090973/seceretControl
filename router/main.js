@@ -13,6 +13,45 @@ const {
   required
 } = require("@hapi/joi");
 
+
+//提交报名
+router.post("/team/regist", async (ctx, next) => {
+  try {
+    const schema = Joi.object({
+      name: Joi.string().required(),
+    }).unknown();
+    let checkRet = schema.validate(ctx.request.body);
+    if (checkRet.error) {
+      throw checkRet.error.message;
+    }
+    let {
+      name
+    } = ctx.request.body;
+
+    let softwareVersionList = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '../data/softwareVersion.json'), 'utf8'));
+
+    let ret = softwareVersionList.find(e => e.name === name);
+    if (ret) {
+      ctx.body = {
+        status: "success",
+        data: ret
+      };
+    } else {
+      ctx.body = {
+        status: "fail",
+        msg: "不存在该软件",
+      };
+    }
+
+  } catch (error) {
+    ctx.body = {
+      status: "fail",
+      msg: error.message || error,
+    };
+  }
+});
+
+
 //获取软件版本
 router.post("/software/getVersion", async (ctx, next) => {
   try {
