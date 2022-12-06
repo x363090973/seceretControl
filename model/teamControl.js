@@ -28,7 +28,6 @@ exports.applyTeam = async (data) => {
   } = data;
   let teamList = await TeamList.getInitData();  
   teamList.addMember(memberNum,type,buildupTimeout,headIndex)
- 
 };
 
 
@@ -38,7 +37,7 @@ exports.applyTeam = async (data) => {
  * @param  {string}   data.teamId      队伍ID
  * @param  {string}   data.memberId      成员ID
  */
- exports.getTeamInfo = async (data) => {
+exports.getTeamInfo = async (data) => {
   let {
     teamId,
     memberId,

@@ -27,7 +27,7 @@ module.exports.Member = Member
 /**
  * @description 
  */
- module.exports.Team  = class Team {
+module.exports.Team  = class Team {
 
     /**
      * @param {*} team 
@@ -55,12 +55,14 @@ module.exports.Member = Member
         this.status = _.get(team, 'status', 1) //1.集结中 2. 满员
         /**队长 */
         this.header = _.get(team, 'header', '')
-        /**团队共享信息 */
-        this.teamInfo = _.get(team, 'teamInfo', {})
+
+        this.positionList = _.get(team, 'positionList', [])
+        this.outQueue = _.get(team, 'outQueue', [])
+        
+        
     }
 
 
-  
 
 };
 
