@@ -7,8 +7,8 @@
 
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext", //
+    "target": "ES6",
+    "module": "commonjs",
     "checkJs": true,
     "baseUrl": "./",
   },
