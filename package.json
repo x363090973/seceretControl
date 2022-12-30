@@ -18,7 +18,7 @@
     "koa-static2": "^0.1.8",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
-    "mocha": "^8.0.1",
+    "mocha": "^8.4.0",
     "moment": "^2.29.0",
     "objectid": "^3.2.1",
     "superagent": "^5.2.2"
